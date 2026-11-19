@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f766e">
+<title>Job Hunter</title>
+<style>
+:root{
+  --bg:#f6efe3;--bg2:#ede2cf;--card:#fffcf6;--text:#12302d;--mute:#5d716d;--line:#e3d7c3;
+  --teal:#0f766e;--pri:#0f766e;--on-pri:#fff;--accent:#c2410c;--amber:#b45309;--grey:#8a9a96;
+  --sh:0 1px 2px rgba(18,48,45,.06),0 8px 24px rgba(18,48,45,.07);--r:16px
+}
+[data-theme=dark]{
+  --bg:#0a1b1a;--bg2:#0f2625;--card:#123231;--text:#e9f4f1;--mute:#9bb6b1;--line:#1f4744;
+  --teal:#2dd4bf;--pri:#2dd4bf;--on-pri:#04211f;--accent:#fb923c;--amber:#fbbf24;--grey:#7c918d;
+  --sh:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.25)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;
+  background:var(--bg) radial-gradient(circle at 8% -8%,color-mix(in srgb,var(--teal) 12%,transparent),transparent 38%)}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.sp{flex:1}
+
+/* Header */
+.hdr{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.hdr .wrap{display:flex;align-items:center;gap:12px;height:66px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;flex:none;background:linear-gradient(135deg,#0f766e,#14b8a6);box-shadow:0 4px 12px rgba(15,118,110,.35)}
+.brand h1{margin:0;font-size:1.15rem;letter-spacing:-.01em;line-height:1.2}
+.stamp{color:var(--mute);font-size:.78rem}
+.btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px;border:1px solid var(--line);background:var(--card);border-radius:11px;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--teal)}
+.btn:disabled{opacity:.7;cursor:wait}
+.btn.pri{background:var(--pri);color:var(--on-pri);border-color:transparent;font-weight:600}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.sm{height:34px;padding:0 12px;font-size:.85rem;border-radius:9px}
+.spin svg{animation:rot .8s linear infinite}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;margin:20px 0 18px;padding:36px;border-radius:24px;color:#f3fbf9;
+  background:linear-gradient(135deg,#0f766e,#115e59 58%,#134e4a);box-shadow:0 14px 40px rgba(15,118,110,.25)}
+[data-theme=dark] .hero{background:linear-gradient(135deg,#0d5c56,#0b4743 60%,#0a3835)}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 88% 12%,rgba(246,239,227,.22),transparent 38%),radial-gradient(circle at 6% 115%,rgba(45,212,191,.28),transparent 45%)}
+.hero>*{position:relative}
+.hero h2{margin:0 0 6px;font-size:clamp(1.5rem,3.4vw,2.25rem);line-height:1.2;letter-spacing:-.02em}
+.hero p{margin:0;opacity:.85}
+.searchbox{display:flex;align-items:center;gap:10px;max-width:780px;margin-top:22px;padding:6px 10px 6px 16px;background:#fffcf6;color:#12302d;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+[data-theme=dark] .searchbox{background:var(--card);color:var(--text)}
+.searchbox input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:1rem;padding:12px 4px}
+.searchbox kbd{border:1px solid var(--line);border-radius:6px;padding:1px 8px;font-size:.8rem;color:var(--mute)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.pill{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:5px 13px;font-size:.84rem}
+.pill b{font-weight:800}
+
+/* Stat tiles */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat{--c:var(--teal);display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);transition:.15s}
+.stat:hover{transform:translateY(-2px);border-color:var(--c)}
+.stat .ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex:none;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.stat b{display:block;font-size:1.75rem;line-height:1.1}
+.stat small{color:var(--mute);font-size:.8rem}
+
+/* Controls */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border:1px solid var(--line);background:var(--card);border-radius:999px;cursor:pointer;font-size:.86rem;transition:.15s;white-space:nowrap}
+.chip i{font-style:normal;font-size:.78rem;color:var(--mute);background:var(--bg2);border-radius:99px;padding:0 8px}
+.chip:hover{border-color:var(--teal)}
+.chip.on{background:var(--pri);border-color:var(--pri);color:var(--on-pri);font-weight:600}
+.chip.on i{background:rgba(255,255,255,.22);color:inherit}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sel{height:40px;padding:0 12px;background:var(--card);border:1px solid var(--line);border-radius:11px;cursor:pointer;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--card)}
+.seg button{width:42px;height:38px;border:0;background:none;cursor:pointer;display:grid;place-items:center;color:var(--mute)}
+.seg button.on{background:var(--pri);color:var(--on-pri)}
+.resbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin:16px 0;color:var(--mute);font-size:.9rem}
+.resbar b{color:var(--text)}
+.err{margin:0 0 16px;padding:12px 16px;border-radius:12px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);font-weight:600}
+
+/* Cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.card{--c:var(--grey);position:relative;display:flex;flex-direction:column;gap:12px;padding:18px;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);animation:rise .35s both}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--c)}
+.card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--c) 45%,var(--line));transition:.18s}
+.soon{--c:var(--accent)}.open{--c:var(--teal)}.unk{--c:var(--amber)}.old{--c:var(--grey)}
+.c-head{display:flex;align-items:center;gap:10px;min-width:0}
+.av{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none;font-weight:800;font-size:.8rem;color:var(--avc);background:color-mix(in srgb,var(--avc) 15%,transparent)}
+.c-org{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mute);font-size:.86rem;font-weight:600}
+.c-title{margin:0;font-size:1.04rem;line-height:1.35;font-weight:700;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.c-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.84rem;color:var(--mute)}
+.c-meta span{display:inline-flex;align-items:center;gap:6px}
+.c-meta b{color:var(--text)}
+.c-meta .u{color:var(--c);font-weight:700}
+.bar{height:6px;border-radius:99px;overflow:hidden;background:color-mix(in srgb,var(--c) 14%,var(--line))}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--c)}
+.c-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:auto}
+.badge{padding:3px 11px;border-radius:999px;font-size:.74rem;font-weight:700;color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent)}
+.badge.new{--c:var(--teal)}
+.acts{margin-left:auto;display:flex;gap:6px;align-items:center}
+.ib{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);background:var(--card);border-radius:10px;cursor:pointer;color:var(--mute);transition:.15s}
+.ib:hover{color:var(--text);border-color:var(--teal)}
+.go{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:10px;background:var(--pri);color:var(--on-pri);text-decoration:none;font-weight:600;font-size:.88rem}
+.go:hover{filter:brightness(1.08)}
+.sk{height:200px;border-radius:var(--r);background:linear-gradient(90deg,var(--card),var(--bg2),var(--card));background-size:200% 100%;animation:sh 1.2s infinite}
+.empty{grid-column:1/-1;text-align:center;padding:56px 16px;color:var(--mute)}
+.empty .big{width:64px;height:64px;border-radius:20px;margin:0 auto 14px;display:grid;place-items:center;color:var(--teal);background:color-mix(in srgb,var(--teal) 12%,transparent)}
+.empty h3{margin:0 0 4px;color:var(--text)}
+.more{text-align:center;margin:22px 0}
+.foot{margin:36px 0 28px;padding-top:18px;border-top:1px solid var(--line);text-align:center;color:var(--mute);font-size:.82rem}
+.foot a{color:var(--teal);font-weight:600;text-decoration:none;cursor:pointer}
+
+/* Toast */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;display:none;align-items:center;gap:14px;padding:11px 16px;border-radius:12px;background:#0f2e2b;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#toast button{border:0;background:none;color:#5eead4;font-weight:700;cursor:pointer}
+
+/* Public (read-only) mode: hides admin controls */
+body.public [data-act="hide"],body.public #upd,body.public #restoreWrap{display:none!important}
+
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes sh{to{background-position:-200% 0}}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* List layout (wide screens) */
+@media(min-width:900px){
+  .grid.list{grid-template-columns:1fr;gap:10px}
+  .grid.list .card{display:grid;grid-template-columns:210px minmax(0,1fr) 230px auto;align-items:center;gap:18px;padding:14px 18px}
+  .grid.list .card::before{inset:0 auto 0 0;width:4px;height:auto}
+  .grid.list .bar{display:none}
+  .grid.list .c-foot{margin:0}
+  .grid.list .c-title{-webkit-line-clamp:2}
+}
+/* Responsive */
+@media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){
+  .wrap{padding:0 14px}
+  .hero{padding:24px 18px;border-radius:18px}
+  .stats{gap:10px}
+  .stat{padding:12px;gap:10px}
+  .stat .ico{width:38px;height:38px}
+  .stat b{font-size:1.4rem}
+  .stamp,.btn .lbl,.seg,.searchbox kbd{display:none}
+  .btn{padding:0 12px}
+  .grid{grid-template-columns:1fr}
+  .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+  .toolbar .sel{flex:1 1 45%}
+}
+</style>
+</head>
+<body class="public">
+
+<header class="hdr"><div class="wrap">
+  <div class="brand">
+    <div class="logo" data-ic="briefcase" data-s="22"></div>
+    <div><h1>Job Hunter</h1><div class="stamp" id="stamp">Federal government jobs</div></div>
+  </div>
+  <div class="sp"></div>
+  <button class="btn" id="theme" data-act="theme" aria-label="Toggle light or dark theme"></button>
+  <button class="btn pri" id="upd" data-act="upd"><span id="updIco" data-ic="refresh" data-s="16"></span><span class="lbl">Update now</span></button>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <h2 id="hello">Welcome back</h2>
+    <p id="today"></p>
+    <label class="searchbox">
+      <span data-ic="search" data-s="20"></span>
+      <input id="q" placeholder="Search by title, ministry or keyword…" autocomplete="off" aria-label="Search jobs">
+      <kbd>/</kbd>
+    </label>
+    <div class="pills" id="pills"></div>
+  </section>
+
+  <div class="err" id="err" hidden>Can’t reach the Job Hunter server. Make sure <b>python server.py</b> is running, then refresh.</div>
+
+  <section class="stats" id="stats"></section>
+
+  <div class="chips" id="chips"></div>
+  <div class="toolbar">
+    <select class="sel" id="org" aria-label="Organization"><option value="">All organizations</option></select>
+    <select class="sel" id="win" aria-label="Closing window">
+      <option value="">Any closing date</option>
+      <option value="0">Closes today</option>
+      <option value="3">Within 3 days</option>
+      <option value="7">Within 7 days</option>
+      <option value="14">Within 14 days</option>
+      <option value="30">Within 30 days</option>
+    </select>
+    <select class="sel" id="sort" aria-label="Sort">
+      <option value="close">Closing soonest</option>
+      <option value="new">Newest posted</option>
+      <option value="org">Organization A–Z</option>
+    </select>
+    <div class="sp"></div>
+    <div class="seg" role="group" aria-label="Layout">
+      <button data-act="view" data-v="cards" id="vCards" title="Card view" data-ic="grid"></button>
+      <button data-act="view" data-v="list" id="vList" title="List view" data-ic="list"></button>
+    </div>
+  </div>
+
+  <div class="resbar">
+    <span id="count"></span>
+    <span style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn sm" data-act="clear">Reset filters</button>
+      <button class="btn sm" data-act="csv"><span data-ic="download" data-s="15"></span>Export CSV</button>
+    </span>
+  </div>
+
+  <div class="grid" id="grid"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+  <div class="more" id="more"></div>
+
+  <footer class="foot">
+    Job Hunter · Data collected from official ministry and department websites.<br>
+    Always confirm details on the original advertisement before applying.
+    <span id="restoreWrap"></span>
+  </footer>
+</main>
+
+<div id="toast" role="status"><span id="tmsg"></span><button data-act="undo" id="tundo">Undo</button></div>
+
+<!-- Admin key handling: only the owner (with the secret link) sees admin buttons -->
+<script>
+(function(){
+  const u=new URL(location.href),k=u.searchParams.get("admin");
+  if(k){try{localStorage.adminKey=k}catch(_){}u.searchParams.delete("admin");history.replaceState(null,"",u.pathname+u.search+u.hash)}
+  let key="";try{key=localStorage.adminKey||""}catch(_){}
+  const f=window.fetch;
+  window.fetch=(url,opt={})=>{if(key&&typeof url==="string"&&url.startsWith("/api/"))opt.headers={...(opt.headers||{}),"X-Admin-Key":key};return f(url,opt)};
+  fetch("/api/me").then(r=>r.json()).then(d=>{if(d.admin)document.body.classList.remove("public")}).catch(()=>{});
+})();
+</script>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* Icons */
+const P={
+ search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+ calendar:'<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+ clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+ link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+ x:'<path d="M18 6 6 18M6 6l12 12"/>',
+ download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+ refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+ moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+ grid:'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
+ list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+ briefcase:'<rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+ alert:'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>',
+ check:'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>',
+ help:'<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/>',
+ archive:'<rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8M10 12h4"/>',
+ arrow:'<path d="M7 7h10v10M7 17 17 7"/>'
+};
+const ic=(n,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+const hydrate=()=>$$("[data-ic]").forEach(e=>e.innerHTML=ic(e.dataset.ic,+e.dataset.s||18));
+
+/* State */
+const ST=[["Closing soon","Closing soon","soon"],["Open","Open","open"],["Date unknown","Date unknown","unk"],["Old (no deadline)","Old","old"],["Expired","Expired","old"]];
+const CLS=Object.fromEntries(ST.map(s=>[s[0],s[2]])),LBL=Object.fromEntries(ST.map(s=>[s[0],s[1]])),ORD=Object.fromEntries(ST.map((s,i)=>[s[0],i]));
+const DEFAULT_ON=["Closing soon","Open"];
+const S={jobs:[],hidden:0,on:new Set(DEFAULT_ON),q:"",org:"",win:"",sort:"close",view:"cards",shown:24,undo:null,list:[],updating:false};
+const post=(u,b)=>fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b||{})});
+const fd=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+const left=d=>d==null?"Closing date not found":d<0?`Closed ${-d} days ago`:d==0?"Closes today":d==1?"1 day left":`${d} days left`;
+const isNew=j=>{if(!j.posted)return false;const a=(Date.now()-new Date(j.posted+"T00:00:00"))/864e5;return a>=0&&a<=3};
+const AVC=["#0f766e","#b45309","#c2410c","#3f6f68","#7a6a2e"];
+function initials(o){const w=String(o).replace(/[^A-Za-z0-9& ]/g,"").split(/\s+/).filter(x=>x&&!/^(of|the|and|&)$/i.test(x));
+  if(!w.length)return"?";return w.length===1?w[0].slice(0,2).toUpperCase():(w[0][0]+w[1][0]).toUpperCase()}
+function avc(o){let h=0;for(const ch of String(o))h=(h*31+ch.charCodeAt(0))>>>0;return AVC[h%AVC.length]}
+
+/* Data */
+async function load(){
+  try{
+    const r=await fetch("/api/jobs");if(!r.ok)throw 0;
+    const d=await r.json();S.jobs=d.jobs;S.hidden=d.hidden;$("#err").hidden=true;
+    const orgs=[...new Set(S.jobs.map(j=>j.org))].sort();
+    $("#org").innerHTML='<option value="">All organizations</option>'+orgs.map(o=>`<option value="${esc(o)}" ${o===S.org?"selected":""}>${esc(o)}</option>`).join("");
+    $("#stamp").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+" · federal government jobs";
+    render();
+  }catch(_){$("#err").hidden=false;$("#grid").innerHTML=""}
+}
+
+/* Render */
+function render(){
+  const c={};S.jobs.forEach(j=>c[j.status]=(c[j.status]||0)+1);const n=k=>c[k]||0;
+  const soon=n("Closing soon"),open=n("Open")+soon,unk=n("Date unknown"),old=n("Expired")+n("Old (no deadline)");
+  $("#pills").innerHTML=`<span class="pill"><b>${open}</b> open now</span><span class="pill"><b>${soon}</b> closing within 7 days</span><span class="pill"><b>${unk}</b> need a date check</span>`;
+  $("#stats").innerHTML=[
+    ["Open now",open,["Closing soon","Open"],"check","--teal"],
+    ["Closing in 7 days",soon,["Closing soon"],"alert","--accent"],
+    ["Date not found",unk,["Date unknown"],"help","--amber"],
+    ["Expired or old",old,["Expired","Old (no deadline)"],"archive","--grey"]
+  ].map(([l,v,k,i,col])=>`<button class="stat" style="--c:var(${col})" data-act="stat" data-k='${JSON.stringify(k)}'><span class="ico">${ic(i,22)}</span><span><b>${v}</b><small>${l}</small></span></button>`).join("");
+  $("#chips").innerHTML=ST.map(s=>`<button class="chip ${S.on.has(s[0])?"on":""}" data-act="chip" data-s="${s[0]}">${s[1]}<i>${n(s[0])}</i></button>`).join("");
+
+  const q=S.q.toLowerCase().split(/[\s,]+/).filter(Boolean);
+  let L=S.jobs.filter(j=>S.on.has(j.status)&&(!S.org||j.org===S.org)&&q.every(w=>j.title.toLowerCase().includes(w)||j.org.toLowerCase().includes(w)));
+  if(S.win!=="")L=L.filter(j=>j.days!=null&&j.days>=0&&j.days<=+S.win);
+  L.sort(S.sort==="new"?(a,b)=>(b.posted||"").localeCompare(a.posted||""):
+    S.sort==="org"?(a,b)=>a.org.localeCompare(b.org)||a.title.localeCompare(b.title):
+    (a,b)=>ORD[a.status]-ORD[b.status]||(a.days??1e9)-(b.days??1e9)||a.title.localeCompare(b.title));
+  S.list=L;
+
+  $("#count").innerHTML=`<b>${L.length}</b> job${L.length===1?"":"s"}${S.q?` matching “${esc(S.q)}”`:""}`;
+  const g=$("#grid");g.className="grid"+(S.view==="list"?" list":"");
+  g.innerHTML=L.length?L.slice(0,S.shown).map(card).join(""):
+    `<div class="empty"><div class="big">${ic("search",30)}</div><h3>No jobs match these filters</h3><p>Try a different keyword, or include more statuses.</p><button class="btn pri" data-act="clear">Reset filters</button></div>`;
+  $("#more").innerHTML=L.length>S.shown?`<button class="btn" data-act="more">Show ${Math.min(24,L.length-S.shown)} more · ${L.length-S.shown} left</button>`:"";
+  $("#restoreWrap").innerHTML=S.hidden?`<br><a data-act="restore">Restore ${S.hidden} hidden job${S.hidden>1?"s":""}</a>`:"";
+  $("#vCards").classList.toggle("on",S.view==="cards");$("#vList").classList.toggle("on",S.view==="list");
+}
+function card(j,i){
+  const d=j.days,pct=d==null||d<0?0:Math.min(100,Math.max(4,Math.round(d/30*100))),u=/^https?:/.test(j.url)?j.url:"#";
+  const when=j.closes?`<span>${ic("calendar",15)}<b>${fd(j.closes)}</b></span><span class="${d!=null&&d<=7&&d>=0?"u":""}">${ic("clock",15)}${left(d)}</span>`
+                     :`<span>${ic("calendar",15)}Closing date not found</span>`;
+  return `<article class="card ${CLS[j.status]}" style="animation-delay:${Math.min(i*18,260)}ms">
+    <div class="c-head"><div class="av" style="--avc:${avc(j.org)}">${esc(initials(j.org))}</div><div class="c-org" title="${esc(j.org)}">${esc(j.org)}</div></div>
+    <h3 class="c-title" title="${esc(j.title)}">${esc(j.title)}</h3>
+    <div class="c-meta">${when}${j.posted?`<span>Posted ${fd(j.posted)}</span>`:""}</div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <div class="c-foot">
+      <span class="badge">${LBL[j.status]}</span>${isNew(j)?'<span class="badge new">New</span>':""}
+      <div class="acts">
+        <button class="ib" data-act="copy" data-url="${esc(u)}" title="Copy link" aria-label="Copy link">${ic("link",16)}</button>
+        <button class="ib" data-act="hide" data-id="${j.id}" title="Not a job: hide" aria-label="Hide this job">${ic("x",16)}</button>
+        <a class="go" href="${esc(u)}" target="_blank" rel="noopener">View ad ${ic("arrow",15)}</a>
+      </div>
+    </div></article>`;
+}
+
+/* Helpers */
+function toast(m,undo){$("#tmsg").textContent=m;S.undo=undo||null;$("#tundo").style.display=undo?"":"none";$("#toast").style.display="flex";
+  clearTimeout(toast.t);toast.t=setTimeout(()=>$("#toast").style.display="none",5000)}
+async function hide(id){
+  const j=S.jobs.find(x=>x.id===id);if(!j)return;
+  S.jobs=S.jobs.filter(x=>x.id!==id);S.hidden++;render();await post("/api/hide",{ids:[id]});
+  toast("Job hidden",async()=>{await post("/api/unhide",{ids:[id]});S.jobs.push(j);S.hidden--;render()});
+}
+async function copy(url){
+  try{await navigator.clipboard.writeText(url)}catch(_){const t=document.createElement("textarea");t.value=url;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove()}
+  toast("Link copied");
+}
+function csv(){
+  const rows=[["Title","Organization","Posted","Closes","Days left","Status","Link"],...S.list.map(j=>[j.title,j.org,j.posted||"",j.closes||"",j.days??"",j.status,j.url])];
+  const t=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\r\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+t],{type:"text/csv"}));a.download="jobs.csv";a.click();URL.revokeObjectURL(a.href);
+}
+function clearFilters(){S.on=new Set(DEFAULT_ON);S.q="";S.org="";S.win="";S.sort="close";S.shown=24;
+  $("#q").value="";$("#org").value="";$("#win").value="";$("#sort").value="close";render()}
+function setTheme(t){document.documentElement.dataset.theme=t;try{localStorage.theme=t}catch(_){}
+  $("#theme").innerHTML=ic(t==="dark"?"sun":"moon",18)}
+function setBtn(busy){const b=$("#upd");b.disabled=busy;$("#updIco").classList.toggle("spin",busy);b.querySelector(".lbl").textContent=busy?"Updating…":"Update now"}
+async function poll(){
+  try{
+    const s=await (await fetch("/api/update/status")).json();
+    if(s.running){S.updating=true;setBtn(true);setTimeout(poll,3000);return}
+    if(S.updating){S.updating=false;await load();toast("Update finished")}
+    setBtn(false);
+  }catch(_){setTimeout(poll,5000)}
+}
+
+/* Events */
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("[data-act]");if(!t)return;
+  switch(t.dataset.act){
+    case"stat":S.on=new Set(JSON.parse(t.dataset.k));S.shown=24;render();break;
+    case"chip":S.on.has(t.dataset.s)?S.on.delete(t.dataset.s):S.on.add(t.dataset.s);S.shown=24;render();break;
+    case"hide":hide(+t.dataset.id);break;
+    case"copy":copy(t.dataset.url);break;
+    case"more":S.shown+=24;render();break;
+    case"clear":clearFilters();break;
+    case"csv":csv();break;
+    case"view":S.view=t.dataset.v;try{localStorage.view=S.view}catch(_){}render();break;
+    case"theme":setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");break;
+    case"undo":if(S.undo)S.undo();$("#toast").style.display="none";break;
+    case"restore":await post("/api/unhide",{});load();break;
+    case"upd":setBtn(true);S.updating=true;await post("/api/update");poll();break;
+  }
+});
+$("#q").oninput=e=>{S.q=e.target.value;S.shown=24;render()};
+$("#org").onchange=e=>{S.org=e.target.value;S.shown=24;render()};
+$("#win").onchange=e=>{S.win=e.target.value;S.shown=24;render()};
+$("#sort").onchange=e=>{S.sort=e.target.value;render()};
+document.addEventListener("keydown",e=>{
+  if(e.key==="/"&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();$("#q").focus()}
+  if(e.key==="Escape"){$("#q").value="";S.q="";render();$("#q").blur()}
+});
+
+/* Init */
+hydrate();
+try{S.view=localStorage.view==="list"?"list":"cards"}catch(_){}
+let th="light";try{th=localStorage.theme||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light")}catch(_){}
+setTheme(th);
+const hr=new Date().getHours();
+$("#hello").textContent=(hr<12?"Good morning":hr<18?"Good afternoon":"Good evening")+". Here’s what’s open today.";
+$("#today").textContent=new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+load();poll();setInterval(load,60000);
+</script>
+</body>
+</html>

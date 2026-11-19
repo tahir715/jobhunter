@@ -1,0 +1,10 @@
+requests
+beautifulsoup4
+pandas
+python-dateutil
+pypdf
+playwright
+fastapi
+uvicorn
+pydantic
+urllib3
