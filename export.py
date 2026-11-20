@@ -16,10 +16,13 @@ out = pd.DataFrame({
     "closes": df["closes"].dt.strftime("%Y-%m-%d"),
     "days": df["days_left"], "status": df["status"]})
 
+scan_file = BASE / "data" / "last_scan.txt"
+scanned = scan_file.read_text(encoding="utf-8").strip() if scan_file.exists() else ""
+
 payload = {
     "jobs": json.loads(out.to_json(orient="records", force_ascii=False)),
     "hidden": hidden,
-    "generated": datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC"),
+    "generated": scanned or datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC"),
 }
 (OUT / "jobs.json").write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
 
@@ -27,7 +30,7 @@ payload = {
 html = (BASE / "static" / "index.html").read_text(encoding="utf-8")
 html = html.replace('fetch("/api/jobs")', 'fetch("jobs.json?v="+Date.now())')
 html = html.replace('"Updated "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})',
-                    '"Data updated "+(d.generated||"")')
+                    '"Last scan: "+(d.generated||"")')
 html = html.replace("load();poll();setInterval(load,60000);", "load();setInterval(load,300000);")
 (OUT / "index.html").write_text(html, encoding="utf-8")
 print(f"Exported {len(payload['jobs'])} jobs to site/")
